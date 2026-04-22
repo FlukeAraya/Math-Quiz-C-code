@@ -1,0 +1,186 @@
+#include <stdio.h> 
+#include <stdlib.h>
+#include <conio.h>
+#include <time.h>
+#include <string.h>
+
+// ===============================
+//        GLOBAL VARIABLES
+// ===============================
+int a, b, point, qnum;
+
+// ===============================
+//      QUESTION FUNCTIONS
+// ===============================
+
+/*
+ * Function: plus1
+ * ----------------------------
+ * สร้างโจทย์บวกเลข 1 หลัก
+ * รับคำตอบจากผู้ใช้ และตรวจสอบผล
+ */
+int plus1(int i){
+	int ans;
+	char inputcheck[20];
+
+	a = random_between(0, 9);   // สุ่มเลขตัวที่ 1
+	b = random_between(0, 9);   // สุ่มเลขตัวที่ 2
+
+	printf("\n\nQuestion %d : %d + %d = ?\n\nANSWER : ", i+1, a, b);
+	scanf("%s", inputcheck);
+
+	ans = numcheck(inputcheck); // ตรวจ input
+
+	if(ans == a + b){
+		printf("\nCorrect\n\n");
+		point += 1; // เพิ่มคะแนน
+	}
+	else{
+		printf("\nIncorrect\n");
+		printf("Correct answer is %d\n\n", a + b);
+	}
+}
+
+/*
+ * Function: minus1
+ * ----------------------------
+ * โจทย์ลบเลข 1 หลัก
+ */
+int minus1(int i){
+	int ans;
+	char inputcheck[20];
+
+	a = random_between(0, 9);
+	b = random_between(0, 9);
+
+	printf("\n\nQuestion %d : %d - %d = ?\n\nANSWER : ", i+1, a, b);
+	scanf("%s", inputcheck);
+
+	ans = numcheck(inputcheck);
+
+	if(ans == a - b){
+		printf("\nCorrect\n\n");
+		point += 1;
+	}
+	else{
+		printf("\nIncorrect\n");
+		printf("Correct answer is %d\n\n", a - b);
+	}
+}
+
+/*
+ * Function: plus2 / minus2 / plus3 / minus3
+ * ----------------------------
+ * เหมือนด้านบน แต่เพิ่มระดับความยาก
+ */
+/*
+ * Function: random_between
+ * ----------------------------
+ * สุ่มตัวเลขในช่วง min - max
+ */
+int random_between(int min, int max){
+    return rand() % (max - min + 1) + min;
+}
+/*
+ * Function: numcheck
+ * ----------------------------
+ * ตรวจสอบว่า input เป็นตัวเลขหรือไม่
+ * ถ้าไม่ใช่ → return -9999
+ */
+int numcheck(char inputcheck[]){
+	char number[11] = "-0123456789";
+	int find, n, i;
+
+	for(n = 0; n < strlen(inputcheck); n++){
+		find = 0;
+
+		for(i = 0; i < 10; i++){
+			if(inputcheck[n] == number[i]){
+				find = 1;
+				break;
+			}
+		}
+
+		if(find == 0){
+			return -9999;
+		}
+	}
+
+	return atoi(inputcheck);
+}
+int main(){
+	srand(time(NULL));
+
+	time_t start, stop;
+	float timer;
+	int select, i, miss;
+	char Mode, key, inputcheck[50];
+
+	system("color E");
+	system("title Math Speed Game : MSG");
+
+	// ===============================
+	//      SELECT GAME MODE
+	// ===============================
+	do{
+		printf("\nMode Easy:E | Medium:M | Hard:H\n");
+		scanf("%s", &Mode);
+		system("cls");
+
+		// ===============================
+		//         EASY MODE
+		// ===============================
+		if(Mode == 'E' || Mode == 'e'){
+
+			printf("Enter number of questions (5-100): ");
+			scanf("%s", inputcheck);
+
+			qnum = numcheck(inputcheck);
+
+			// validate input
+			if(qnum < 5 || qnum > 100){
+				do{
+					printf("\nPlease try again (5-100): ");
+					scanf("%s", inputcheck);
+					qnum = numcheck(inputcheck);
+				}while(qnum < 5 || qnum > 100);
+			}
+
+			system("cls");
+
+			// ===============================
+			//        START TIMER
+			// ===============================
+			time(&start);
+
+			// ===============================
+			//        GAME LOOP
+			// ===============================
+			for(i = 0; i < qnum; i++){
+
+				select = random_between(1, 2);
+
+				if(select == 1) plus1(i);
+				else plus1(i); // (ตัวอย่างย่อ)
+
+				key = getch();
+				system("cls");
+			}
+
+			// ===============================
+			//        END TIMER
+			// ===============================
+			time(&stop);
+			timer = difftime(stop, start);
+
+			// ===============================
+			//        RESULT
+			// ===============================
+			printf("Score: %d\n", point);
+			printf("Time: %.2f seconds\n", timer);
+
+			return 0;
+		}
+
+	}while(1);
+}
